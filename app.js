@@ -1,40 +1,58 @@
+const readline = require('readline');
 const fs = require('fs').promises;
-const path = require('path');
+const { program } = require('commander');
+require('colors');
 
-const bookPath = path.join(__dirname)
+program.option('-f, --file [type]', 'file for saving game results', 'results.txt');
+program.parse(process.argv);
 
-async function getAll() {
-    const result = await fs.readFile(bookPath);
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
-    return JSON.parse(result.toString());
-}
+let count = 0;
+const logFiles = program.opts().file;
+const mind = Math.floor(Math.random() * 10) + 1;
 
-async function addBook(title, author) 
-const books = await getAll();
-const book = books.find(({author}) => author === author)
+const isValid = value => {
+  if (isNaN(value)) {
+    console.log('Введите число!'.red);
+    return false;
+  }
+  if (value < 1 || value > 10) {
+    console.log('Число должно быть от 1 до 10'.red);
+    return false;
+  }
+  return true;
+};
 
-if (!book) {
-    throw new Error('book not found');
-} 
-// fs.readdir(__dirname)
-//   .then(files => {
-//     return Promise.all(
-//       files.map(async filename => {
-//         const stats = await fs.stat(filename);
-//         return {
-//           Name: filename,
-//           Size: stats.size,
-//           Date: stats.mtime,
-//         };
-//       })
-//     );
-//   })
-//   .then(result => console.log(result));
+const log = async data => {
+  try {
+    await fs.appendFile(logFiles, `${data} \n`);
+    console.log(`Удалось сохранить результат в файл ${logFiles}`.green);
+  } catch (error) {
+    console.log(`Не удалось сохранить результат в файл ${logFiles}`.red);
+  }
+};
 
-// fs.appendFile('test.txt', 'data in txt files');
-// fs.rename('test.txt', 'hello.txt');
-// fs.readFile('hello.txt').then(data => console.log(data.toString()));
-// fs.unlink('test.txt');
-
-fs.readFile('hello.txt', 'utf-8').then(data => console.log(data));
-
+const game = () => {
+  rl.question('Введите число от 1 до 10, чтобы угадать задуманное число: '.yellow, value => {
+    let a = +value;
+    if (!isValid(a)) {
+      game();
+      return;
+    }
+    count += 1;
+    if (a === mind) {
+      console.log('Поздравляю Вы угадали число за %d шагов'.green, count);
+      log(
+        `${new Date().toLocaleDateString()}: Поздравляю Вы угадали число за ${count} раз`
+      ).finally(() => rl.close());
+      return;
+    }
+    console.log('Вы не угадали еще попытка'.red);
+    game();
+  });
+};
+game();

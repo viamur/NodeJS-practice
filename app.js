@@ -1,21 +1,12 @@
 const fs = require('fs').promises;
+var http = require('http');
 
-// fs.readdir(__dirname)
-//   .then(files => {
-//     return Promise.all(
-//       files.map(async filename => {
-//         const stats = await fs.stat(filename);
-//         return {
-//           Name: filename,
-//           Size: stats.size,
-//           Date: stats.mtime,
-//         };
-//       })
-//     );
-//   })
-//   .then(result => console.log(result));
+http
+  .createServer(async (request, response) => {
+    if (request.method === 'POST') {
+      await fs.appendFile('test.txt', `${request.headers['content-type']},\n`);
+    }
 
-// fs.appendFile('test.txt', 'data in txt files');
-// fs.rename('test.txt', 'hello.txt');
-// fs.readFile('hello.txt').then(data => console.log(data.toString()));
-// fs.unlink('test.txt');
+    response.end();
+  })
+  .listen(3000);

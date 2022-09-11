@@ -1,8 +1,12 @@
-const http = require('http');
-const port = 3000;
+const fs = require('fs').promises;
+var http = require('http');
 
-const server = http.createServer((req, res) => {
-  res.end();
-});
+http
+  .createServer(async (request, response) => {
+    if (request.method === 'POST') {
+      await fs.appendFile('test.txt', `${request.headers['content-type']},\n`);
+    }
 
-server.listen(port, () => console.log('Server listening on port ' + port));
+    response.end();
+  })
+  .listen(3000);

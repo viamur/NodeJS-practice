@@ -1,7 +1,0 @@
-application/json,
-application/json,
-application/json,
-text/plain,
-application/json,
-application/json,
-application/json,

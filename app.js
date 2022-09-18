@@ -1,14 +1,21 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-// const myRouter = require('./myRoute');
+const { connectMongo, getCats } = require('./db/connection');
 
-// app.use('/my-router', myRouter);
+const myRouter = require('./myRoute');
 
 // app.get('/contact*', (req, res) => {
 //   res.send('Hello World!');
 // });
 
+app.use((req, res, next) => {
+  const data = getCats();
+  req.db = { ...data };
+  next();
+});
+app.use(express.json());
+app.use('/', myRouter);
 // app.use((req, res, next) => {
 //   console.log('Наше промежуточное ПО');
 //   //   next();
@@ -65,6 +72,12 @@ const app = express();
 //   res.redirect('https://google.com/');
 // });
 
-app.listen(3000, () => {
-  console.log('Example app listening on port 3000!');
-});
+const start = async () => {
+  await connectMongo();
+
+  app.listen(3000, () => {
+    console.log('Example app listening on port 3000!');
+  });
+};
+
+start();

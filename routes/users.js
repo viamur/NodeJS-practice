@@ -21,4 +21,12 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    res.status(200).json({ id: req.params.id });
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
 module.exports = router;

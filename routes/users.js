@@ -23,7 +23,8 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    res.status(200).json({ id: req.params.id });
+    const result = await service.deleteContact(req.params.id);
+    res.status(200).json(result);
   } catch (error) {
     res.status(404).send(error.message);
   }

@@ -8,4 +8,8 @@ const createContact = async body => {
   return Contact.create(body);
 };
 
-module.exports = { getAllContacts, createContact };
+const deleteContact = async id => {
+  return Contact.findByIdAndDelete(id);
+};
+
+module.exports = { getAllContacts, createContact, deleteContact };

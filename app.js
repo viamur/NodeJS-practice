@@ -3,6 +3,7 @@ const { connect } = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const users = require('./routes/users');
+const auth = require('./routes/auth');
 require('dotenv').config();
 
 const app = express();
@@ -15,7 +16,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
 
-app.use('/', users);
+app.use('/users', users);
+app.use('/auth', auth);
 
 app.use(async function (req, res) {
   res.status(404).send('<h1>Page Not Found</h1>');

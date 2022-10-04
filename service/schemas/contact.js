@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const { Schema, model } = require('mongoose');
 
 const contact = new Schema(
@@ -18,6 +19,10 @@ const contact = new Schema(
     kod: {
       type: String,
       match: /[0-1]{1}-[0-9]{2}/,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
     },
   },
   { versionKey: false, timestamps: true }

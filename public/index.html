@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', () => {
+            const socket = io();
+
+            const form = document.getElementById("form");
+            const input = document.getElementById("input");
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                if (input.value) {
+                    socket.emit("CHAT_MESSAGE", { message: input.value });
+                    input.value = '';
+                }
+
+            });
+
+            socket.on('CHAT_UPDATE', ({ message }) => {
+                const list = document.getElementById('list');
+
+                const item = document.createElement('li');
+                item.innerHTML = message;
+                list.appendChild(item);
+
+                window.scrollTo(0, document.body.scrollHeight);
+
+            })
+        })
+    </script>
+    <style>
+        body {
+            margin: 0
+        }
+
+        #form {
+            position: fixed;
+            bottom: 0;
+            padding: 20px;
+            background-color: lightsalmon;
+            display: flex;
+            width: 100%;
+        }
+
+        #input {
+            width: 80%;
+            border-radius: 5px;
+            padding: 10px 30px;
+            border: none;
+            outline: none;
+        }
+
+        #btn {
+            padding: 10px 30px;
+            border-radius: 5px;
+            background-color: limegreen;
+            border: none;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 30px;
+        }
+
+        li {
+            list-style: none;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        li::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            width: 10px;
+            height: 10px;
+            background-color: lightsalmon;
+            border-radius: 50%;
+        }
+
+        #btn:hover {
+            background-color: green;
+            transition: all 0.5s linear;
+        }
+    </style>
+    <title>SocketIO</title>
+</head>
+
+<body>
+    <main>
+        <section>
+            <ul id="list">
+            </ul>
+            <form id="form">
+                <input type="text" id="input" autocomplete="off">
+                <button type="submit" id="btn">Send</button>
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

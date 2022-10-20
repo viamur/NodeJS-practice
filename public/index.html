@@ -19,28 +19,47 @@
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
 
+                /* Проверка что б пустую строку не отправлять */
                 if (input.value) {
+                    /* Отправляем на сервер сообщение с тегом  "CHAT_MESSAGE" */
                     socket.emit("CHAT_MESSAGE", { message: input.value });
+
+                    /* Проверяем если приватное сообщение то добовляем его в наш чат */
+                    if (input.value.includes('@')) {
+                        const list = document.getElementById('list');
+                        const item = document.createElement('li');
+                        item.innerHTML = `Приватное сообщение: ${input.value}`;
+                        list.appendChild(item);
+                    }
+                    /* Очищаем инпут */
                     input.value = '';
                 }
 
             });
 
+            /* Слушаем от сервера по тегу  "CHAT_UPDATE" */
             socket.on('CHAT_UPDATE', ({ message }) => {
+                /* Ищем ul */
                 const list = document.getElementById('list');
 
+                /* Создаем li */
                 const item = document.createElement('li');
+                /* Добовлеем сообщение в li */
                 item.innerHTML = message;
+                /* Добовляем в дом li */
                 list.appendChild(item);
 
+                /* Скрол в низ */
                 window.scrollTo(0, document.body.scrollHeight);
 
             })
+
+            /* Слушаем от сервера по тегу "chat_online" */
             socket.on('chat_online', ({ usersChat }) => {
+                /* И все по анологии перебираем массив и создаем список и добовляем в ul */
                 const listOnline = usersChat.map(id => `<li id="onlineItem">${id}</li>`);
                 listOnline.unshift(`<li id="onlineItem">Online: ${listOnline.length}</li>`)
                 onlineList.innerHTML = listOnline.join(' ');
-                console.log(usersChat);
             })
         })
     </script>

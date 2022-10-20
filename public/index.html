@@ -14,6 +14,7 @@
 
             const form = document.getElementById("form");
             const input = document.getElementById("input");
+            const onlineList = document.getElementById('online');
 
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
@@ -34,6 +35,12 @@
 
                 window.scrollTo(0, document.body.scrollHeight);
 
+            })
+            socket.on('chat_online', ({ usersChat }) => {
+                const listOnline = usersChat.map(id => `<li id="onlineItem">${id}</li>`);
+                listOnline.unshift(`<li id="onlineItem">Online: ${listOnline.length}</li>`)
+                onlineList.innerHTML = listOnline.join(' ');
+                console.log(usersChat);
             })
         })
     </script>
@@ -71,17 +78,24 @@
             margin-left: 30px;
         }
 
-        li {
+        #list {
             list-style: none;
-            padding: 10px;
-            display: flex;
-            align-items: center;
+            padding: 10px 40px;
+            position: relative;
+            letter-spacing: 1px;
+            flex-grow: 2;
         }
 
-        li::before {
+        #list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #list li::before {
             content: '';
             position: absolute;
-            left: 20px;
+            left: 15px;
             width: 10px;
             height: 10px;
             background-color: lightsalmon;
@@ -92,6 +106,45 @@
             background-color: green;
             transition: all 0.5s linear;
         }
+
+        #online {
+            background-color: rgb(86, 137, 168);
+            list-style: none;
+            width: 250px;
+            padding: 30px;
+            margin: 0;
+            height: calc(100vh - 80px);
+            color: white;
+            letter-spacing: 1px;
+            box-shadow: 6px 0px 10px -5px rgb(0 0 0 / 30%);
+        }
+
+        #online li:not(:first-child) {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        #online li:not(:first-child)::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            width: 10px;
+            height: 2px;
+            background-color: lightsalmon;
+
+        }
+
+        #online li:first-child {
+            font-size: 20px;
+            text-transform: uppercase;
+            border-bottom: 1px solid lightsalmon;
+            margin-bottom: 20px;
+        }
+
+        #div {
+            display: flex;
+        }
     </style>
     <title>SocketIO</title>
 </head>
@@ -99,7 +152,10 @@
 <body>
     <main>
         <section>
-            <ul id="list">
+            <div id="div">
+                <ul id="online"></ul>
+                <ul id="list">
+            </div>
             </ul>
             <form id="form">
                 <input type="text" id="input" autocomplete="off">

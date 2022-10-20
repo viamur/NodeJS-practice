@@ -13,10 +13,20 @@ const io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
+let usersChat = [];
+
 io.on('connection', socket => {
+  const { id } = socket;
+  usersChat.push(id);
   console.log('User connected!');
+  io.emit('chat_online', { usersChat });
   socket.on('CHAT_MESSAGE', ({ message }) => {
     io.emit('CHAT_UPDATE', { message });
+  });
+  socket.on('disconnect', () => {
+    console.log('User disconnect!');
+    usersChat = usersChat.filter(el => el !== id);
+    io.emit('chat_online', { usersChat });
   });
 });
 

@@ -42,6 +42,10 @@ io.on('connection', socket => {
       return;
     }
 
+    app.get('/admin', (req, res) => {
+      res.send('<h1>Hello</h1>');
+    });
+
     /* ЕСЛИ НЕ ПРИВАТНОЕ то просто всем отсылаем сообщение */
     io.emit('CHAT_UPDATE', { message });
   });
